@@ -70,9 +70,11 @@ See `docs/evaluation.md`.
 `python -m taintwatch.server` serves a REST API over the benchmark with a SQLite trace store.
 Install with `pip install -e ".[dev,server]"`. See `docs/server.md`.
 
-## Trace viewer
+## Trace viewer & Security Sandbox
 
-`web/` holds a React + TypeScript viewer for stored runs. See `docs/web.md`.
+`web/` holds a React + TypeScript viewer for stored runs and an interactive security playground
+for anti-evasion testing, token verification, and declassification contracts.
+See `docs/web.md` and `docs/interactive-sandbox.md`.
 
 ## Analysis
 

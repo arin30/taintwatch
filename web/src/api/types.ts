@@ -151,3 +151,37 @@ export interface ResultsData {
   benign_breakdown: RateGroups;
   paired: PairedInfo[];
 }
+
+export interface CanonicalizeResponse {
+  text: string;
+  canonical: string;
+  has_evasion: boolean;
+  score: number;
+  techniques: string[];
+}
+
+export interface TokenIssueResponse {
+  token: string;
+  token_id: string;
+  content_digest: string;
+  merkle_root: string;
+  created_at: number;
+  expires_at: number;
+}
+
+export interface TokenVerifyResponse {
+  valid: boolean;
+  label: {
+    integrity: string;
+    confidentiality: string;
+    sources: string[];
+  };
+  token_id: string;
+  sender: string;
+}
+
+export interface DeclassifyTestResponse {
+  matches: boolean;
+  pattern: string;
+  value: string;
+}

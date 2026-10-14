@@ -6,8 +6,9 @@ import { RunList } from "./components/RunList";
 import { ResultsView } from "./components/ResultsView";
 import { RunView } from "./components/RunView";
 import { ScenarioBrowser } from "./components/ScenarioBrowser";
+import { SecurityPlayground } from "./components/SecurityPlayground";
 
-type View = "runs" | "scenarios" | "results";
+type View = "runs" | "scenarios" | "results" | "sandbox";
 
 export default function App() {
   const [view, setView] = useState<View>("runs");
@@ -97,6 +98,14 @@ export default function App() {
         >
           Results
         </button>
+        <button
+          type="button"
+          className={view === "sandbox" ? "tab active" : "tab"}
+          aria-pressed={view === "sandbox"}
+          onClick={() => setView("sandbox")}
+        >
+          Security Sandbox
+        </button>
       </nav>
       {error && (
         <p className="error" role="alert">
@@ -123,12 +132,12 @@ export default function App() {
             )}
           </main>
         </div>
+      ) : view === "results" ? (
+        <ResultsView onError={setError} />
+      ) : view === "sandbox" ? (
+        <SecurityPlayground onError={setError} />
       ) : (
-        view === "results" ? (
-          <ResultsView onError={setError} />
-        ) : (
-          <ScenarioBrowser onError={setError} onChanged={() => void refresh()} />
-        )
+        <ScenarioBrowser onError={setError} onChanged={() => void refresh()} />
       )}
     </div>
   );

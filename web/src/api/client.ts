@@ -9,6 +9,10 @@ import type {
   ScenarioDetail,
   ResultsData,
   ScenarioSummary,
+  CanonicalizeResponse,
+  TokenIssueResponse,
+  TokenVerifyResponse,
+  DeclassifyTestResponse,
 } from "./types";
 
 export class ApiError extends Error {
@@ -75,4 +79,31 @@ export const api = {
   createRun: (body: RunRequest) =>
     request<RunDetail>("/api/runs", { method: "POST", body: JSON.stringify(body) }),
   deleteRun: (id: number) => request<void>(`/api/runs/${id}`, { method: "DELETE" }),
+  canonicalize: (text: string) =>
+    request<CanonicalizeResponse>("/api/canonicalize", {
+      method: "POST",
+      body: JSON.stringify({ text }),
+    }),
+  issueToken: (body: {
+    sender?: string;
+    content: string;
+    integrity?: string;
+    confidentiality?: string;
+    secret_key?: string;
+    ttl_seconds?: number;
+  }) =>
+    request<TokenIssueResponse>("/api/tokens/issue", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  verifyToken: (body: { content: string; token: string; secret_key?: string }) =>
+    request<TokenVerifyResponse>("/api/tokens/verify", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  testDeclassify: (pattern: string, value: string) =>
+    request<DeclassifyTestResponse>("/api/declassify/test", {
+      method: "POST",
+      body: JSON.stringify({ pattern, value }),
+    }),
 };

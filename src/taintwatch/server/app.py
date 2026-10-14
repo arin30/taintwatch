@@ -28,6 +28,30 @@ class RunRequest(BaseModel):
     confirm: bool = False
 
 
+class CanonicalizeRequest(BaseModel):
+    text: str
+
+
+class TokenIssueRequest(BaseModel):
+    sender: str = "agent-1"
+    content: str
+    integrity: str = "untrusted"
+    confidentiality: str = "public"
+    secret_key: str = "taintwatch-demo-key-32-bytes-long!"
+    ttl_seconds: float = 300.0
+
+
+class TokenVerifyRequest(BaseModel):
+    content: str
+    token: str
+    secret_key: str = "taintwatch-demo-key-32-bytes-long!"
+
+
+class DeclassifyTestRequest(BaseModel):
+    pattern: str
+    value: str
+
+
 def _scenario_summary(scenario: Scenario) -> dict[str, Any]:
     return {
         "id": scenario.id,
@@ -183,5 +207,74 @@ def create_app(
                 row["benign_ok"] / row["benign"] if row["benign"] else None
             )
         return rows
+
+    @app.post("/api/canonicalize")
+    def api_canonicalize(req: CanonicalizeRequest) -> dict[str, Any]:
+        from taintwatch.spans.canonical import detect_evasion
+        from taintwatch.spans.tstr import TStr
+
+        tstr = TStr.of(req.text)
+        report = detect_evasion(tstr)
+        return {
+            "text": req.text,
+            "canonical": report.canonical.text,
+            "has_evasion": report.has_evasion,
+            "score": round(report.score, 3),
+            "techniques": list(report.techniques),
+        }
+
+    @app.post("/api/tokens/issue")
+    def api_issue_token(req: TokenIssueRequest) -> dict[str, Any]:
+        from taintwatch.crypto import TaintTokenSigner
+        from taintwatch.labels import Confidentiality, Integrity, Label
+
+        try:
+            integ = Integrity[req.integrity.upper()]
+            conf = Confidentiality[req.confidentiality.upper()]
+        except KeyError as exc:
+            raise HTTPException(status_code=400, detail=f"invalid label level: {exc}") from exc
+
+        signer = TaintTokenSigner(req.secret_key.encode("utf-8"), agent_id=req.sender)
+        label = Label(integ, conf, frozenset({f"agent:{req.sender}"}))
+        token = signer.issue(content=req.content, label=label, ttl_seconds=req.ttl_seconds)
+        return {
+            "token": token.to_compact(),
+            "token_id": token.token_id,
+            "content_digest": token.content_digest,
+            "merkle_root": token.merkle_root,
+            "created_at": token.created_at,
+            "expires_at": token.expires_at,
+        }
+
+    @app.post("/api/tokens/verify")
+    def api_verify_token(req: TokenVerifyRequest) -> dict[str, Any]:
+        from taintwatch.crypto import CryptoTaintError, TaintToken, TaintTokenVerifier
+
+        try:
+            token = TaintToken.from_compact(req.token)
+            verifier = TaintTokenVerifier(req.secret_key.encode("utf-8"))
+            result = verifier.verify(token, req.content)
+            return {
+                "valid": result.valid,
+                "label": {
+                    "integrity": result.label.integrity.name,
+                    "confidentiality": result.label.confidentiality.name,
+                    "sources": sorted(result.label.sources),
+                },
+                "token_id": token.token_id,
+                "sender": token.sender,
+            }
+        except CryptoTaintError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    @app.post("/api/declassify/test")
+    def api_test_declassify(req: DeclassifyTestRequest) -> dict[str, Any]:
+        import re
+
+        try:
+            matches = bool(re.fullmatch(req.pattern, req.value))
+            return {"matches": matches, "pattern": req.pattern, "value": req.value}
+        except re.error as exc:
+            raise HTTPException(status_code=400, detail=f"invalid regex pattern: {exc}") from exc
 
     return app
