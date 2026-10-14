@@ -1,9 +1,10 @@
 import pytest
 
 from taintwatch import Confidentiality, Guard, Integrity, PolicyViolation, default_policy
+from taintwatch.guard import ConfirmFn
 
 
-def new_guard(confirm=None) -> Guard:
+def new_guard(confirm: ConfirmFn | None = None) -> Guard:
     return Guard(default_policy(), confirm=confirm)
 
 
