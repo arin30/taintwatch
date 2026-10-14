@@ -19,6 +19,12 @@ See `docs/policy-language.md` and `policies/default.twp`.
 `taintwatch.spans.TStr` labels character ranges instead of whole values.
 See `docs/span-tracking.md`.
 
+## Anti-evasion and canonicalization
+
+`taintwatch.spans.canonical` provides zero-width stripping, Unicode homoglyph normalization,
+and taint-preserving multi-layer decoding (Base64, URL percent, hex, HTML entities).
+See `docs/canonicalization.md`.
+
 ## Agent runtime
 
 `taintwatch.agent` provides a tool registry, a simulated world and a runtime that routes

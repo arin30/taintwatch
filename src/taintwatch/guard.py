@@ -32,6 +32,7 @@ class AuditRecord:
     tool: str
     arg_nodes: tuple[tuple[str, str], ...]
     verdict: Verdict
+    evasions: tuple[str, ...] = ()
 
 
 class Guard:
@@ -40,10 +41,13 @@ class Guard:
         policy: Policy,
         graph: ProvenanceGraph | None = None,
         confirm: ConfirmFn | None = None,
+        *,
+        canonicalize: bool = False,
     ) -> None:
         self._policy = policy
         self._graph = graph if graph is not None else ProvenanceGraph()
         self._confirm = confirm
+        self._canonicalize = canonicalize
         self._audit: list[AuditRecord] = []
 
     @property
@@ -77,11 +81,64 @@ class Guard:
         )
         return Labeled(value, node.id, label)
 
+    def _prepare_args(
+        self, args: Mapping[str, Labeled[Any]]
+    ) -> tuple[dict[str, Labeled[Any]], tuple[str, ...]]:
+        if not self._canonicalize:
+            return dict(args), ()
+
+        from taintwatch.spans.canonical import detect_evasion
+        from taintwatch.spans.tstr import TStr
+
+        prepared: dict[str, Labeled[Any]] = {}
+        detected_evasions: list[str] = []
+
+        for name, labeled in args.items():
+            val = labeled.value
+            if isinstance(val, TStr):
+                report = detect_evasion(val)
+                if report.has_evasion:
+                    detected_evasions.extend(report.techniques)
+                    canonical_val = report.canonical
+                    node = self._graph.add(
+                        NodeKind.DERIVED,
+                        canonical_val.overall_label(),
+                        f"canonicalized {name}",
+                        (labeled.node_id,),
+                    )
+                    prepared[name] = Labeled(
+                        canonical_val, node.id, canonical_val.overall_label()
+                    )
+                else:
+                    prepared[name] = labeled
+            elif isinstance(val, str):
+                tval = TStr.of(val, labeled.label)
+                report = detect_evasion(tval)
+                if report.has_evasion:
+                    detected_evasions.extend(report.techniques)
+                    canonical_val = report.canonical
+                    node = self._graph.add(
+                        NodeKind.DERIVED,
+                        canonical_val.overall_label(),
+                        f"canonicalized {name}",
+                        (labeled.node_id,),
+                    )
+                    prepared[name] = Labeled(
+                        str(canonical_val), node.id, canonical_val.overall_label()
+                    )
+                else:
+                    prepared[name] = labeled
+            else:
+                prepared[name] = labeled
+
+        return prepared, tuple(detected_evasions)
+
     def check(self, tool: str, args: Mapping[str, Labeled[Any]]) -> Verdict:
         """Evaluate a prospective tool call and record it in the audit log."""
-        verdict = self._policy.evaluate(tool, args)
-        arg_nodes = tuple((name, labeled.node_id) for name, labeled in args.items())
-        self._audit.append(AuditRecord(tool, arg_nodes, verdict))
+        prepared_args, evasions = self._prepare_args(args)
+        verdict = self._policy.evaluate(tool, prepared_args)
+        arg_nodes = tuple((name, labeled.node_id) for name, labeled in prepared_args.items())
+        self._audit.append(AuditRecord(tool, arg_nodes, verdict, evasions))
         return verdict
 
     def call(
@@ -93,7 +150,11 @@ class Guard:
         output_integrity: Integrity = Integrity.TOOL_OUTPUT,
     ) -> Labeled[R]:
         """Run ``fn`` only if policy permits; label and track its result."""
-        verdict = self.check(tool, args)
+        prepared_args, evasions = self._prepare_args(args)
+        verdict = self._policy.evaluate(tool, prepared_args)
+        arg_nodes = tuple((name, labeled.node_id) for name, labeled in prepared_args.items())
+        self._audit.append(AuditRecord(tool, arg_nodes, verdict, evasions))
+
         if verdict.action is Action.BLOCK:
             raise PolicyViolation(tool, verdict)
         if verdict.action is Action.CONFIRM and (
@@ -101,12 +162,13 @@ class Guard:
         ):
             raise PolicyViolation(tool, verdict)
 
-        result = fn(**{name: labeled.value for name, labeled in args.items()})
-        label = Label.join_all(a.label for a in args.values()).cap_integrity(output_integrity)
+        result = fn(**{name: labeled.value for name, labeled in prepared_args.items()})
+        base_label = Label.join_all(a.label for a in prepared_args.values())
+        label = base_label.cap_integrity(output_integrity)
         node = self._graph.add(
             NodeKind.TOOL_RESULT,
             label,
             f"result of {tool}",
-            tuple(a.node_id for a in args.values()),
+            tuple(a.node_id for a in prepared_args.values()),
         )
         return Labeled(result, node.id, label)
