@@ -25,6 +25,12 @@ See `docs/span-tracking.md`.
 and taint-preserving multi-layer decoding (Base64, URL percent, hex, HTML entities).
 See `docs/canonicalization.md`.
 
+## Cryptographic Inter-Agent Taint Tokens
+
+`taintwatch.crypto` provides zero-trust HMAC-SHA256 attestations, Merkle provenance trees,
+and anti-replay protection for distributed multi-agent workflows.
+See `docs/cryptographic-tokens.md`.
+
 ## Agent runtime
 
 `taintwatch.agent` provides a tool registry, a simulated world and a runtime that routes

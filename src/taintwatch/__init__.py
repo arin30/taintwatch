@@ -1,5 +1,6 @@
 """Taintwatch: information-flow control for LLM agents."""
 
+from taintwatch.crypto import TaintToken, TaintTokenSigner, TaintTokenVerifier
 from taintwatch.errors import PolicyError, TaintwatchError
 from taintwatch.guard import Guard, PolicyViolation
 from taintwatch.labels import Confidentiality, Integrity, Label
@@ -18,6 +19,9 @@ __all__ = [
     "PolicyError",
     "PolicyViolation",
     "ProvenanceGraph",
+    "TaintToken",
+    "TaintTokenSigner",
+    "TaintTokenVerifier",
     "TaintwatchError",
     "Verdict",
     "default_policy",
