@@ -31,6 +31,12 @@ See `docs/canonicalization.md`.
 and anti-replay protection for distributed multi-agent workflows.
 See `docs/cryptographic-tokens.md`.
 
+## Differential Taint & Covert Channel Defense
+
+`taintwatch.covert` detects implicit flows and side-channel leakage by evaluating counterfactual
+action divergence and Shannon entropy budgets.
+See `docs/covert-channels.md`.
+
 ## Agent runtime
 
 `taintwatch.agent` provides a tool registry, a simulated world and a runtime that routes
