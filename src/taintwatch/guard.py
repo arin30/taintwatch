@@ -81,6 +81,48 @@ class Guard:
         )
         return Labeled(value, node.id, label)
 
+    def declassify(
+        self,
+        tool: str,
+        arg_name: str,
+        labeled: Labeled[T],
+    ) -> Labeled[T]:
+        """Explicitly declassify a value according to policy sanitization contracts."""
+        from taintwatch.errors import DeclassificationError
+
+        declass = self._policy.find_declassification(tool, arg_name)
+        if declass is None:
+            raise DeclassificationError(
+                f"no declassification rule registered for {tool}({arg_name})"
+            )
+        if not declass.validates(labeled.value):
+            raise DeclassificationError(
+                f"value {labeled.value!r} failed sanitizer grammar {declass.pattern!r} "
+                f"for rule {declass.name!r}"
+            )
+        promoted_integrity = (
+            declass.target_integrity
+            if declass.target_integrity is not None
+            else labeled.label.integrity
+        )
+        lowered_conf = (
+            declass.target_confidentiality
+            if declass.target_confidentiality is not None
+            else labeled.label.confidentiality
+        )
+        new_label = Label(
+            integrity=max(labeled.label.integrity, promoted_integrity),
+            confidentiality=min(labeled.label.confidentiality, lowered_conf),
+            sources=labeled.label.sources,
+        )
+        node = self._graph.add(
+            NodeKind.DERIVED,
+            new_label,
+            f"declassified via {declass.name}",
+            (labeled.node_id,),
+        )
+        return Labeled(labeled.value, node.id, new_label)
+
     def _prepare_args(
         self, args: Mapping[str, Labeled[Any]]
     ) -> tuple[dict[str, Labeled[Any]], tuple[str, ...]]:

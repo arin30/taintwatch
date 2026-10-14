@@ -37,6 +37,12 @@ See `docs/cryptographic-tokens.md`.
 action divergence and Shannon entropy budgets.
 See `docs/covert-channels.md`.
 
+## Policy-Enforced Declassification Sandboxes
+
+Taintwatch supports declarative declassification contracts and grammar-bounded sanitizers
+to safely promote validated values into privileged sinks without vulnerability.
+See `docs/declassification.md`.
+
 ## Agent runtime
 
 `taintwatch.agent` provides a tool registry, a simulated world and a runtime that routes
