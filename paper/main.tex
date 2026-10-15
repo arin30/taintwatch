@@ -1,0 +1,124 @@
+\documentclass[conference]{IEEEtran}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{url}
+\input{generated/numbers}
+
+\begin{document}
+
+\title{Taintwatch: Span-Level Information-Flow Control\\for Tool-Using LLM Agents (Draft)}
+\author{\IEEEauthorblockN{Author Name}
+\IEEEauthorblockA{Affiliation\\email@example.com}}
+\maketitle
+
+\begin{abstract}
+Tool-using LLM agents can be steered by instructions hidden in the data they read.
+We present Taintwatch, a runtime reference monitor that labels data with integrity and
+confidentiality levels, tracks those labels at character-span granularity, and checks every
+tool call against a declarative policy that has a static validator.
+We evaluate it on a generated benchmark of \NAttacks{} attacks and \NBenign{} benign tasks
+against a mock agent that obeys injected instructions.
+The default policy stops all \NAttacks{} attacks (95\% upper bound \TwAttackHi{}) while
+completing \TwBenign{} of benign tasks; labeling the whole context instead of individual spans
+lowers completion to \CoarseBenign{}.
+Because those attacks target the sinks the policy guards, we add \OutNAttacks{} attacks that
+do not: the default policy leaves \OutTwAttack{} of them through, and a stricter policy still
+leaves \OutStrictAttack{}.
+We discuss what this shows and what it does not.
+\end{abstract}
+
+\section{Introduction}
+% TODO: motivate prompt injection against agents with tools (email, files, shell, web).
+An agent that reads a web page and can also run commands mixes trusted and untrusted text in one
+context. Filters that look for suspicious phrases are easy to evade and reject harmless text.
+We take an information-flow view: track where each piece of data came from, and decide at the
+tool boundary whether that data may reach that tool.
+
+Contributions:
+(1) span-level label tracking, which keeps trusted and untrusted parts of one string apart;
+(2) a small policy language with a static validator, whose tool-coverage lint predicted a gap
+that the attacks of Section~\ref{sec:eval} later exploited;
+(3) a reproducible benchmark with machine-checkable success conditions, including attacks
+deliberately placed outside the guarded sinks;
+(4) an analysis of how many retries an attacker needs against each defense.
+
+\section{Threat Model}
+The attacker controls text that the agent reads (web pages, email, downloaded files) but not
+the user's request, the policy, or the labels the runtime assigns to sources.
+The attacker wants one of: running a command, leaking a secret, sending an email, writing a
+file, or changing what the user is told.
+We assume the labels on data are correct; Section~\ref{sec:eval} shows a case where they are not.
+
+\section{Design}
+\textbf{Labels.}
+Integrity is one of untrusted, tool output, user, system; confidentiality is public, internal,
+secret. Combining values lowers integrity and raises confidentiality, so taint only spreads.
+
+\textbf{Spans.}
+A tracked string stores a label per contiguous segment and keeps them through concatenation,
+slicing, splitting, replacement, joining and interpolation. A call is judged by the labels of its
+actual argument text, not by everything the agent has seen.
+
+\textbf{Policy.}
+Rules name a tool pattern, an optional argument, a label condition and an action
+(block or confirm). A validator reports duplicate or redundant rules, impossible conditions,
+and known tools that no rule covers.
+
+\section{Benchmark}
+The main suite has \NAttacks{} attacks sampled from a grid of five goals, four variants, three
+carriers, six wrapper styles and three task phrasings, plus \NBenign{} benign tasks in seven
+families. Success is checked on the simulated world after each run. The agent is a deterministic
+mock that obeys injected directives, a worst-case model, not a measurement of real models.
+
+\section{Evaluation}\label{sec:eval}
+\textbf{Baselines.}
+A phrase filter, a hand-weighted heuristic scorer, a model of spotlighting with an assumed
+resistance probability, and an ablation that labels the whole context.
+
+\input{generated/tab_main}
+
+\textbf{Main result.}
+Table~\ref{tab:main} gives the main numbers. Taintwatch stops every attack, and so does the
+whole-context ablation; the ablation differs only in utility (Table~\ref{tab:ablation}).
+The phrase filter and scorer stop only attacks whose wording contains trigger phrases, which is
+half of the generated wrapper styles. This depends on how the attacks were generated.
+
+\input{generated/tab_ablation}
+
+\textbf{Attacks outside the guarded sinks.}
+The main goals target sinks the default policy guards, so its result there is partly by
+construction. Table~\ref{tab:outside} uses goals that avoid those sinks. The stricter policy
+closes two of the four and cannot close the other two: one relies on a wrong label, and
+the other changes the answer without any tool call.
+
+\input{generated/tab_outside}
+
+\textbf{Retries.}
+Table~\ref{tab:adversary} shows the chance that an attacker trying $k$ random variants gets one
+through. A defense with a modest per-variant leak rate is not safe against retries.
+
+\input{generated/tab_adversary}
+
+\section{Limitations}
+\begin{itemize}
+\item The agent is a scripted mock. Results show what the policy layer sees against a fully
+compliant attacker, not how often real models are fooled. A real-model evaluation is required.
+\item Attack goals and baseline thresholds were written by the authors; a different generator or
+a published detector would change the baseline numbers.
+\item The retry analysis is random search and understates an adaptive attacker.
+\item Labels are trusted. Data that carries the wrong label defeats the monitor.
+\item Utility checks verify that an action happened, not that its content was correct.
+\item A confirmation rule that is auto-approved is not a defense.
+\item Latency was measured on the mock and says nothing about deployment cost.
+\end{itemize}
+
+\section{Related Work}
+% TODO: read and position against CaMeL and FIDES (not yet verified), prompt-injection
+% benchmarks, spotlighting, and classical information-flow control.
+
+\section{Conclusion}
+Span-level labels let a monitor stop injected tool calls without rejecting tasks that merely
+forward trusted values. The evidence here is from a mock agent and a generated benchmark,
+and the clearest remaining work is a real-model evaluation and a policy on where data may be sent.
+
+\end{document}

@@ -10,3 +10,8 @@ build/
 *.db
 .env
 .DS_Store
+
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/*.pdf

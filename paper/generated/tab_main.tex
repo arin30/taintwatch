@@ -1,0 +1,18 @@
+\begin{table}[t]
+\centering
+\small
+\caption{Main benchmark: \NAttacks{} attacks and \NBenign{} benign tasks per defense. Attack success is a percentage with its 95\% Wilson interval.}
+\label{tab:main}
+\begin{tabular}{lrrr}
+\toprule
+Defense & Attack success [95\% CI] & Benign utility & Utility under attack \\
+\midrule
+none & 100.0\% [99.4, 100.0] & 100.0\% & 100.0\% \\
+taintwatch & 0.0\% [0.0, 0.6] & 86.0\% & 100.0\% \\
+taintwatch-coarse & 0.0\% [0.0, 0.6] & 71.5\% & 100.0\% \\
+keyword & 27.0\% [23.6, 30.7] & 83.0\% & 27.0\% \\
+scorer@2.5 & 31.0\% [27.4, 34.8] & 91.0\% & 31.0\% \\
+spotlight@0.9 & 8.7\% [6.7, 11.2] & 100.0\% & 100.0\% \\
+\bottomrule
+\end{tabular}
+\end{table}

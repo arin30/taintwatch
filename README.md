@@ -90,3 +90,8 @@ cover, plus a stricter `taintwatch-strict` policy. See `docs/outside.md`.
 
 `python -m taintwatch.adversary` measures how many retries an attacker needs against each
 defense, using the full attack grid. See `docs/adversary.md`.
+
+## Paper
+
+`paper/main.tex` is a draft; `python -m taintwatch.paper` generates its tables from the results.
+See `paper/README.md`.

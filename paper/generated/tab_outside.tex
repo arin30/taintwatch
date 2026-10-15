@@ -1,0 +1,17 @@
+\begin{table}[t]
+\centering
+\small
+\caption{Attack success (\%) on four goals outside the default policy's guarded sinks.}
+\label{tab:outside}
+\begin{tabular}{lrrrr}
+\toprule
+Defense & answer\_poison & exfil\_get & exfil\_internal & exfil\_mislabeled \\
+\midrule
+none & 100.0\% & 100.0\% & 100.0\% & 100.0\% \\
+taintwatch & 100.0\% & 100.0\% & 100.0\% & 100.0\% \\
+taintwatch-strict & 100.0\% & 0.0\% & 0.0\% & 100.0\% \\
+keyword & 42.0\% & 48.0\% & 48.0\% & 50.0\% \\
+scorer@2.5 & 42.0\% & 48.0\% & 48.0\% & 50.0\% \\
+\bottomrule
+\end{tabular}
+\end{table}

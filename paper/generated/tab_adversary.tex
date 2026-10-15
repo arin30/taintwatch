@@ -1,0 +1,19 @@
+\begin{table}[t]
+\centering
+\small
+\caption{Chance (\%) that $k$ random variants of the attacker's best goal include one that succeeds.}
+\label{tab:adversary}
+\begin{tabular}{llrrr}
+\toprule
+Defense & Best goal & $k{=}1$ & $k{=}10$ & $k{=}25$ \\
+\midrule
+none & answer\_poison & 100.0\% & 100.0\% & 100.0\% \\
+taintwatch & answer\_poison & 100.0\% & 100.0\% & 100.0\% \\
+taintwatch-coarse & answer\_poison & 100.0\% & 100.0\% & 100.0\% \\
+taintwatch-strict & answer\_poison & 100.0\% & 100.0\% & 100.0\% \\
+keyword & answer\_poison & 50.0\% & 99.9\% & 100.0\% \\
+scorer@2.5 & answer\_poison & 50.0\% & 99.9\% & 100.0\% \\
+spotlight@0.9 & answer\_poison & 11.6\% & 71.6\% & 96.2\% \\
+\bottomrule
+\end{tabular}
+\end{table}
