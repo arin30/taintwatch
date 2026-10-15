@@ -85,3 +85,8 @@ generated Jupyter notebooks. See `docs/analysis.md`.
 
 `python -m taintwatch.evaluation.outside` runs four attack goals the default policy does not
 cover, plus a stricter `taintwatch-strict` policy. See `docs/outside.md`.
+
+## Query-budget attacker
+
+`python -m taintwatch.adversary` measures how many retries an attacker needs against each
+defense, using the full attack grid. See `docs/adversary.md`.
