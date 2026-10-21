@@ -307,3 +307,14 @@ Check out our [Contributing Guide](CONTRIBUTING.md) and [Code of Conduct](CODE_O
 
 TaintWatch is licensed under the **[Apache License 2.0](LICENSE)**.
 Commercial and non-commercial usage permitted. Contributions are warmly welcomed.
+
+
+## 🙏 Acknowledgments
+
+TaintWatch is built with the support of people who take the time to contribute ideas, code, tests, documentation, and feedback.
+
+A special thank-you to [arin30](https://github.com/arin30) for contributing API-key authentication and regression tests, helping strengthen TaintWatch's server security.
+
+We're grateful to everyone who contributes to the project, reports issues, suggests improvements, or helps make TaintWatch better. Every contribution matters.
+
+**Want to contribute?** Check out our [open issues](https://github.com/eyadstein/taintwatch/issues), [contributing guide](https://github.com/eyadstein/taintwatch/blob/main/CONTRIBUTING.md), or [contributors graph](https://github.com/eyadstein/taintwatch/graphs/contributors).
