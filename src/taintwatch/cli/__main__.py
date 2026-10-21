@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import argparse
 import sys
-from typing import Sequence
+from collections.abc import Sequence
 
 from taintwatch.cli.commands import (
     cmd_check,
@@ -19,12 +19,16 @@ def build_parser() -> argparse.ArgumentParser:
     """Build root CLI argument parser."""
     parser = argparse.ArgumentParser(
         prog="taintwatch",
-        description="TaintWatch: Information-Flow Control & Zero-Trust Taint Tracking for LLM Agents",
+        description=(
+            "TaintWatch: Information-Flow Control & Zero-Trust Taint Tracking for LLM Agents"
+        ),
     )
     subparsers = parser.add_subparsers(dest="subcommand", help="Available subcommands")
 
     # inspect
-    p_inspect = subparsers.add_parser("inspect", help="Inspect text or file with span-level taint analysis")
+    p_inspect = subparsers.add_parser(
+        "inspect", help="Inspect text or file with span-level taint analysis"
+    )
     p_inspect.add_argument("target", help="Text string or file path to inspect")
     p_inspect.add_argument("--source", default="cli:input", help="Source provenance tag")
     p_inspect.add_argument(
@@ -41,7 +45,9 @@ def build_parser() -> argparse.ArgumentParser:
     )
 
     # check
-    p_check = subparsers.add_parser("check", help="Evaluate a tool call against an Information-Flow policy")
+    p_check = subparsers.add_parser(
+        "check", help="Evaluate a tool call against an Information-Flow policy"
+    )
     p_check.add_argument("tool", help="Target tool/sink name (e.g. bash, sql_exec, http_post)")
     p_check.add_argument("payload", help="Tool argument payload to evaluate")
     p_check.add_argument(
@@ -82,7 +88,9 @@ def build_parser() -> argparse.ArgumentParser:
 
     t_verify = t_subs.add_parser("verify", help="Verify token authenticity and Merkle inclusion")
     t_verify.add_argument("--token-json", required=True, help="Serialized token JSON")
-    t_verify.add_argument("--payload", required=True, help="Original payload used when issuing the token")
+    t_verify.add_argument(
+        "--payload", required=True, help="Original payload used when issuing the token"
+    )
     t_verify.add_argument("--key", default="taintwatch-console-default-key-32b")
 
     # serve

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import argparse
-import json
 from pathlib import Path
 
 from taintwatch.cli.console import (
@@ -22,7 +21,7 @@ from taintwatch.cli.console import (
     style,
 )
 from taintwatch.crypto.service import TaintTokenSigner, TaintTokenVerifier
-from taintwatch.crypto.tokens import TaintToken, CryptoTaintError
+from taintwatch.crypto.tokens import CryptoTaintError, TaintToken
 from taintwatch.guard import Guard
 from taintwatch.labels import Confidentiality, Integrity, Label
 from taintwatch.policy import Action, Policy, Rule
@@ -44,7 +43,9 @@ def cmd_inspect(args: argparse.Namespace) -> int:
     print(style("\n=== TaintWatch Terminal Inspector ===", fg=CYAN, bold=True))
     print(f"Source: {style(src_label, fg=GRAY)} | Length: {len(text)} chars\n")
 
-    int_level = Integrity[args.integrity.upper()] if hasattr(args, "integrity") else Integrity.UNTRUSTED
+    int_level = (
+        Integrity[args.integrity.upper()] if hasattr(args, "integrity") else Integrity.UNTRUSTED
+    )
     conf_level = (
         Confidentiality[args.confidentiality.upper()]
         if hasattr(args, "confidentiality")
@@ -114,7 +115,9 @@ def cmd_check(args: argparse.Namespace) -> int:
     )
     guard = Guard(policy=Policy(rules=(rule,)))
 
-    input_int = Integrity[args.input_integrity.upper()] if args.input_integrity else Integrity.UNTRUSTED
+    input_int = (
+        Integrity[args.input_integrity.upper()] if args.input_integrity else Integrity.UNTRUSTED
+    )
     labeled_arg = guard.ingest(
         payload_str,
         source="cli:input",
@@ -124,11 +127,20 @@ def cmd_check(args: argparse.Namespace) -> int:
 
     print(style(f"\n=== Evaluating Tool Call: '{tool_name}' ===", fg=CYAN, bold=True))
     print(f"Payload: {style(payload_str, bold=True)}")
-    print(f"Sink Requirements: min_integrity={sink_min_int.name}, max_confidentiality={sink_max_conf.name}\n")
+    print(
+        f"Sink Requirements: min_integrity={sink_min_int.name}, "
+        f"max_confidentiality={sink_max_conf.name}\n"
+    )
 
     verdict = guard.check(tool_name, {"arg": labeled_arg})
     if verdict.allowed:
-        print(style("✓ ALLOWED: Call complies with Information-Flow Control policy.", fg=GREEN, bold=True))
+        print(
+            style(
+                "✓ ALLOWED: Call complies with Information-Flow Control policy.",
+                fg=GREEN,
+                bold=True,
+            )
+        )
         return 0
     else:
         print(style("✗ BLOCKED: Policy Violation Detected!", fg=RED, bold=True))
@@ -219,6 +231,7 @@ def cmd_token(args: argparse.Namespace) -> int:
 def cmd_serve(args: argparse.Namespace) -> int:
     """Start the TaintWatch REST server and web UI."""
     import uvicorn
+
     from taintwatch.server.app import create_app
 
     host = args.host or "127.0.0.1"

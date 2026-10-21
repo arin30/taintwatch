@@ -1,6 +1,5 @@
 """Unit tests for TaintWatch cross-platform terminal CLI and console utilities."""
 
-import json
 from io import StringIO
 from unittest.mock import patch
 
@@ -102,7 +101,7 @@ def test_cli_token_issue_and_verify() -> None:
         assert "Signed Token Envelope" in output
 
         # Extract the compact token (last non-empty line)
-        lines = [l.strip() for l in output.strip().splitlines() if l.strip()]
+        lines = [line.strip() for line in output.strip().splitlines() if line.strip()]
         compact_token = lines[-1]
 
     # Verify valid
@@ -113,8 +112,8 @@ def test_cli_token_issue_and_verify() -> None:
                 "verify",
                 "--token-json",
                 compact_token,
-                    "--payload",
-                    "user_record_42",
+                "--payload",
+                "user_record_42",
                 "--key",
                 "test-secret-key-123456",
             ]
@@ -132,8 +131,8 @@ def test_cli_token_issue_and_verify() -> None:
                 "--token-json",
                 corrupted,
                 "--payload",
-                    "user_record_42",
-                    "--key",
+                "user_record_42",
+                "--key",
                 "test-secret-key-123456",
             ]
         )

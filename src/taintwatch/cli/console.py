@@ -4,10 +4,10 @@ from __future__ import annotations
 
 import os
 import sys
-from typing import Sequence
+from collections.abc import Sequence
 
 from taintwatch.labels import Confidentiality, Integrity
-from taintwatch.spans.tstr import Segment, TStr
+from taintwatch.spans.tstr import TStr
 
 
 def _supports_color() -> bool:
