@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+import hmac
+import os
 from collections import Counter
 from typing import Annotated, Any
 
-from fastapi import FastAPI, HTTPException, Query, Response
+from fastapi import FastAPI, HTTPException, Query, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 from taintwatch import __version__
@@ -96,6 +99,19 @@ def create_app(
     app.add_middleware(
         CORSMiddleware, allow_origins=DEV_ORIGINS, allow_methods=["*"], allow_headers=["*"]
     )
+
+    @app.middleware("http")
+    async def require_api_key(request: Request, call_next: Any) -> Response:
+        configured_key = os.getenv("TAINTWATCH_API_KEY")
+        if configured_key:
+            supplied_key = request.headers.get("X-API-Key", "")
+            if not hmac.compare_digest(supplied_key, configured_key):
+                return JSONResponse(
+                    status_code=401,
+                    content={"detail": "invalid or missing API key"},
+                )
+        return await call_next(request)
+
     store = TraceStore(db_path)
     active = suite if suite is not None else build_suite()
     scenarios = active.scenarios
