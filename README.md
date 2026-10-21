@@ -4,14 +4,14 @@
 
 ### Enterprise Runtime Information-Flow Control (IFC) & Zero-Trust Taint Tracking for LLM Agents
 
-[![CI](https://github.com/eyadstein/taintwatch/actions/workflows/ci.yml/badge.svg)](https://github.com/eyadstein/taintwatch/actions/workflows/ci.yml)
-[![PyPI version](https://img.shields.io/pypi/v/taintwatch.svg?color=blue)](https://pypi.org/project/taintwatch/)
-[![Python 3.11+](https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13-blue.svg)](https://pypi.org/project/taintwatch/)
+[![Release](https://img.shields.io/badge/release-v0.1.0-blue.svg)](https://github.com/eyadstein/taintwatch/releases)
+[![PyPI Ready](https://img.shields.io/badge/PyPI%20Package-v0.1.0-3775A9?logo=pypi&logoColor=white)](pyproject.toml)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13-blue.svg)](https://github.com/eyadstein/taintwatch)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Type Checked: Mypy Strict](https://img.shields.io/badge/mypy-strict%20100%25-blueviolet.svg)](https://mypy.readthedocs.io/)
 [![Docker Ready](https://img.shields.io/badge/docker-ready-2496ED.svg?logo=docker&logoColor=white)](https://hub.docker.com/)
 [![MCP Compatible](https://img.shields.io/badge/Model_Context_Protocol-MCP_Ready-orange.svg)](https://modelcontextprotocol.io/)
-[![PRs Welcome](https://img.shields.io/badge/PRs-30+_Tasks_Open-brightgreen.svg)](docs/CONTRIBUTING_TASKS_30.md)
+[![30 Open Issues](https://img.shields.io/github/issues/eyadstein/taintwatch?color=brightgreen&label=30%20tasks%20open)](https://github.com/eyadstein/taintwatch/issues)
 
 <p align="center">
   <a href="#-quickstart-in-30-seconds">Quickstart</a> •
@@ -269,7 +269,7 @@ Detailed research documentation:
 
 We are actively building the open-source community around TaintWatch! We have created a curated catalog of **30 concrete, actionable tasks** designed for developers of all experience levels:
 
-👉 **[Explore the 30 Contributor Tasks Catalog (`docs/CONTRIBUTING_TASKS_30.md`)](docs/CONTRIBUTING_TASKS_30.md)**
+👉 **[Claim a Task on GitHub Issues (30 Live Issues Ready)](https://github.com/eyadstein/taintwatch/issues)** or explore the **[Detailed Catalog Specification (`docs/CONTRIBUTING_TASKS_30.md`)](docs/CONTRIBUTING_TASKS_30.md)**
 
 Tasks are organized across 6 distinct categories:
 - 🔌 **Integrations**: AutoGen, CrewAI, Semantic Kernel, LlamaIndex, Haystack.
