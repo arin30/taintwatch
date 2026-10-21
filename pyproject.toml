@@ -42,7 +42,7 @@ classifiers = [
 dependencies = []
 
 [project.scripts]
-taintwatch = "taintwatch.server.__main__:main"
+taintwatch = "taintwatch.cli.__main__:main"
 
 [project.urls]
 Homepage = "https://github.com/eyadstein/taintwatch"

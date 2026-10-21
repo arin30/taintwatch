@@ -5,7 +5,7 @@ from __future__ import annotations
 import hmac
 import os
 from collections import Counter
-from typing import Annotated, Any
+from typing import Annotated, Any, cast
 
 from fastapi import FastAPI, HTTPException, Query, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
@@ -110,7 +110,7 @@ def create_app(
                     status_code=401,
                     content={"detail": "invalid or missing API key"},
                 )
-        return await call_next(request)
+        return cast(Response, await call_next(request))
 
     store = TraceStore(db_path)
     active = suite if suite is not None else build_suite()
