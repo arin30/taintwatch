@@ -48,6 +48,12 @@ See `docs/declassification.md`.
 `taintwatch.agent` provides a tool registry, a simulated world and a runtime that routes
 every tool call through the guard. See `docs/agent-runtime.md`.
 
+## Enterprise Integrations: MCP, OpenAI, and LangChain
+
+`taintwatch.integrations` provides drop-in guards for Anthropic's Model Context Protocol (MCP),
+OpenAI function calling, and LangChain agents.
+See `docs/integrations.md`.
+
 ## Benchmark
 
 `taintwatch.bench` generates 600+ attack scenarios and 200 benign tasks from a seed.
