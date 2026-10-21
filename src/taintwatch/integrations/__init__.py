@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from taintwatch.integrations.crewai import taint_guarded
 from taintwatch.integrations.langchain import (
     LangChainToolExecution,
     TaintwatchLangChainHandler,
@@ -17,4 +18,5 @@ __all__ = [
     "OpenAIToolCall",
     "OpenAIToolGuard",
     "TaintwatchLangChainHandler",
+    "taint_guarded",
 ]
