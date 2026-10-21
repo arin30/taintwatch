@@ -5,10 +5,51 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "taintwatch"
 version = "0.1.0"
-description = "Information-flow control for LLM agents"
+description = "Enterprise runtime information-flow control, taint tracking, and covert-channel defense for LLM agents"
 readme = "README.md"
 requires-python = ">=3.11"
+license = "Apache-2.0"
+authors = [
+    { name = "TaintWatch Authors", email = "maintainers@taintwatch.org" }
+]
+keywords = [
+    "llm-security",
+    "information-flow-control",
+    "taint-tracking",
+    "ai-guardrails",
+    "prompt-injection-defense",
+    "mcp-security",
+    "model-context-protocol",
+    "zero-trust-ai",
+    "langchain",
+    "crewai",
+    "autogen",
+    "cybersecurity",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Security",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Typing :: Typed",
+]
 dependencies = []
+
+[project.scripts]
+taintwatch = "taintwatch.server.__main__:main"
+
+[project.urls]
+Homepage = "https://github.com/eyadstein/taintwatch"
+Documentation = "https://github.com/eyadstein/taintwatch#readme"
+Repository = "https://github.com/eyadstein/taintwatch.git"
+Issues = "https://github.com/eyadstein/taintwatch/issues"
+Changelog = "https://github.com/eyadstein/taintwatch/releases"
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "ruff>=0.5", "mypy>=1.10"]

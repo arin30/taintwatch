@@ -1,0 +1,25 @@
+services:
+  taintwatch:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: taintwatch:latest
+    container_name: taintwatch
+    ports:
+      - "8000:8000"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8000
+    volumes:
+      - taintwatch-data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  taintwatch-data:
+    driver: local
