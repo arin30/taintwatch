@@ -14,10 +14,12 @@ Status: early research prototype.
 Policies can be written in a small purpose-built language with a static validator.
 See `docs/policy-language.md` and `policies/default.twp`.
 
-## Span-level tracking
+## Span-level tracking & FastSpanIndex
 
 `taintwatch.spans.TStr` labels character ranges instead of whole values.
-See `docs/span-tracking.md`.
+`taintwatch.spans.FastSpanIndex` provides an augmented interval tree for $O(\log N)$
+lookups across massive contexts.
+See `docs/span-tracking.md` and `docs/fast-span-index.md`.
 
 ## Anti-evasion and canonicalization
 

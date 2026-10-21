@@ -14,6 +14,7 @@ from taintwatch.spans.canonical import (
     normalize_homoglyphs,
     strip_invisible,
 )
+from taintwatch.spans.fast_index import FastSpanIndex
 from taintwatch.spans.guard_ext import derive_text, ingest_text
 from taintwatch.spans.structured import (
     Tagged,
@@ -28,6 +29,7 @@ from taintwatch.spans.tstr import Segment, TStr, interpolate
 __all__ = [
     "EvasionReport",
     "Excerpt",
+    "FastSpanIndex",
     "Segment",
     "TStr",
     "Tagged",
