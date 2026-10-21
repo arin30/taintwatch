@@ -1,0 +1,22 @@
+name: Contributor Task Assignment
+description: Claim or propose a community task from the 30+ contributor tasks catalog
+labels: ["good first issue", "help wanted"]
+body:
+  - type: markdown
+    attributes:
+      value: Thank you for stepping up to contribute!
+  - type: input
+    id: task_number
+    attributes:
+      label: Task Title or Number
+      description: Task ID or Title from docs/CONTRIBUTING_TASKS_30.md
+      placeholder: "e.g. Task 04: Add LlamaIndex RAG Document Ingestion Adapter"
+    validations:
+      required: true
+  - type: textarea
+    id: plan
+    attributes:
+      label: Implementation Plan
+      description: Brief overview of how you plan to implement this task.
+    validations:
+      required: true
